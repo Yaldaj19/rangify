@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(composer:*)",
+      "Bash(php artisan:*)",
+      "Bash(php -v)",
+      "Bash(php --version)",
+      "Bash(pnpm install)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm dev)",
+      "Bash(pnpm build)",
+      "Bash(pnpm tsc:*)",
+      "Bash(pnpm run:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(npx prettier:*)",
+      "Bash(node -v)",
+      "Bash(node --version)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(mysql -u root:*)",
+      "Bash(mysqldump:*)",
+      "Read(//c/xampp/htdocs/projects/rangify.site/**)",
+      "Read(//c/Users/jyald/.claude/docs/**)",
+      "Write(//c/xampp/htdocs/projects/rangify.site/**)",
+      "Edit(//c/xampp/htdocs/projects/rangify.site/**)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(php artisan migrate:fresh --force)",
+      "Bash(php artisan db:wipe --force)",
+      "Read(//c/xampp/htdocs/projects/rangify.site/.env)",
+      "Read(//c/xampp/htdocs/projects/rangify.site/.env.*)"
+    ]
+  },
+  "env": {
+    "RANGIFY_LOCAL_URL": "http://localhost/projects/rangify.site/public"
+  }
+}
