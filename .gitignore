@@ -31,3 +31,6 @@ tools/*.bin
 __pycache__/
 *.pyc
 *.pyo
+
+# Claude Code local settings (may contain secrets - never commit)
+.claude/settings.local.json
