@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AiVisionController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SmartSelectController;
 use Illuminate\Support\Facades\Route;
@@ -24,9 +25,9 @@ Route::post('/api/ai/smart-point', [SmartSelectController::class, 'point'])
 Route::post('/api/ai/precompute', [SmartSelectController::class, 'precompute'])
     ->name('ai.precompute');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth')->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware('auth')
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
