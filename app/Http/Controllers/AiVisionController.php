@@ -15,7 +15,7 @@ class AiVisionController extends Controller
     public function segment(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'image' => ['required', 'string'],
+            'image' => ['required', 'string', 'max:20000000'],
         ]);
 
         $image = $validated['image'];

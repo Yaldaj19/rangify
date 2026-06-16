@@ -22,6 +22,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'tenant_id',
+        'edit_quota',
     ];
 
     protected $hidden = [
@@ -34,7 +35,51 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'edit_quota' => 'integer',
         ];
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasRole('super-admin');
+    }
+
+    public function isClientAdmin(): bool
+    {
+        return $this->hasRole('client-admin');
+    }
+
+    public function isRegularUser(): bool
+    {
+        return $this->hasRole('user');
+    }
+
+    /** سهمیه نامحدود؟ (مدیرها همیشه نامحدود؛ کاربر با edit_quota=null هم نامحدود) */
+    public function hasUnlimitedQuota(): bool
+    {
+        return $this->isSuperAdmin() || $this->isClientAdmin() || $this->edit_quota === null;
+    }
+
+    /** تعداد تصویرهای ساخته‌شده (واحد مصرف سهمیه = هر پروژه). */
+    public function usedEdits(): int
+    {
+        return $this->projects()->count();
+    }
+
+    /** سهمیه باقیمانده؛ null یعنی نامحدود. */
+    public function remainingEdits(): ?int
+    {
+        if ($this->hasUnlimitedQuota()) {
+            return null;
+        }
+
+        return max(0, (int) $this->edit_quota - $this->usedEdits());
+    }
+
+    /** آیا کاربر اجازه‌ی ساخت تصویر/پروژه‌ی جدید را دارد؟ */
+    public function canEdit(): bool
+    {
+        return $this->hasUnlimitedQuota() || $this->usedEdits() < (int) $this->edit_quota;
     }
 
     public function tenant(): BelongsTo

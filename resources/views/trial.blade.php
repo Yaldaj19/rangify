@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/rangify-icon.png') }}">
     <title>ادیتور رنگ — Rangify</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
     <script defer src="{{ asset('js/alpine.min.js') }}"></script>
     <style>
         /* Periodic attention pulse for the shortcuts button — fires for ~0.8s every 7s */
@@ -21,13 +22,16 @@
 
     <header class="border-b border-gray-200 bg-white flex-none">
         <div class="px-6 py-3 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2">
-                <span class="text-xl font-bold text-brand-600">Rangify</span>
-                <span class="text-xs text-gray-500 px-2 py-1 rounded-full bg-brand-50 border border-brand-200">تست رایگان</span>
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
+                <img src="{{ asset('images/rangify-logo.png') }}" alt="Rangify" class="h-8 w-auto">
             </a>
             <nav class="flex items-center gap-3 text-sm">
-                <a href="{{ route('login') }}" class="text-gray-700 hover:text-brand-600">ورود</a>
-                <a href="{{ route('register') }}" class="rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 transition">ثبت‌نام</a>
+                @auth
+                    <a href="{{ route('dashboard') }}" class="rounded-lg border border-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">بازگشت به داشبورد</a>
+                @else
+                    <a href="{{ route('login') }}" class="text-gray-700 hover:text-brand-600">ورود</a>
+                    <a href="{{ route('register') }}" class="rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 transition">ثبت‌نام</a>
+                @endauth
             </nav>
         </div>
     </header>

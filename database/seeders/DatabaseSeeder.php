@@ -17,12 +17,13 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RoleSeeder::class);
 
-        // ادمین اصلی پروژه (super-admin) — رمز را پس از اولین ورود تغییر دهید.
+        // ادمین اصلی پروژه (super-admin). firstOrCreate رمزِ کاربرِ موجود را تغییر نمی‌دهد؛
+        // مقدار زیر فقط روی دیتابیس کاملاً تازه استفاده می‌شود.
         User::firstOrCreate(
-            ['email' => 'admin@homeh.com'],
+            ['email' => 'yaldaj.619@gmail.com'],
             [
-                'name' => 'Rangify Admin',
-                'password' => Hash::make('Rangify@2026'),
+                'name' => 'Admin',
+                'password' => Hash::make(env('ADMIN_PASSWORD', \Illuminate\Support\Str::random(16))),
             ]
         )->assignRole('super-admin');
 

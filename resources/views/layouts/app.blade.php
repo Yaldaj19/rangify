@@ -4,10 +4,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <link rel="icon" type="image/png" href="{{ asset('images/rangify-icon.png') }}">
 
         <title>{{ config('app.name', 'Rangify') }}</title>
 
-        <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
         <script defer src="{{ asset('js/alpine.min.js') }}"></script>
     </head>
     <body class="font-sans antialiased">

@@ -38,7 +38,7 @@ class SmartSelectController extends Controller
     public function precompute(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'image' => ['required', 'string'],
+            'image' => ['required', 'string', 'max:20000000'],
         ]);
 
         if (empty(config('services.opencv.url')) || !$this->opencvAlive()) {
@@ -73,7 +73,7 @@ class SmartSelectController extends Controller
     public function point(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'image' => ['required', 'string'],
+            'image' => ['required', 'string', 'max:20000000'],
             'points' => ['required', 'array', 'min:1', 'max:16'],
             'points.*' => ['array', 'size:2'],
             'labels' => ['nullable', 'array'],
