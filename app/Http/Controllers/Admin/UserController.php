@@ -22,7 +22,7 @@ class UserController extends Controller
 
         $admin = auth()->user();
 
-        $query = User::query()->with('tenant')->withCount('projects')->latest();
+        $query = User::query()->with(['tenant', 'creator'])->withCount('projects')->latest();
 
         if (! $admin->isSuperAdmin()) {
             // client-admin: فقط کاربرهای عادیِ tenant خودش
@@ -65,6 +65,7 @@ class UserController extends Controller
             'password' => $password,
             'tenant_id' => $tenantId,
             'edit_quota' => $request->boolean('unlimited') ? null : (int) $data['edit_quota'],
+            'created_by' => $request->user()->id,
         ]);
 
         $user->assignRole('user');

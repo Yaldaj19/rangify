@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'tenant_id',
         'edit_quota',
+        'created_by',
     ];
 
     protected $hidden = [
@@ -37,6 +38,12 @@ class User extends Authenticatable
             'password' => 'hashed',
             'edit_quota' => 'integer',
         ];
+    }
+
+    /** ادمینی که این کاربر را ساخته است. */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function isSuperAdmin(): bool

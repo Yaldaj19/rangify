@@ -60,6 +60,7 @@ class TenantController extends Controller
                 'phone' => $data['admin_phone'] ?? null,
                 'password' => $password,
                 'tenant_id' => $tenant->id,
+                'created_by' => auth()->id(),
             ]);
             $owner->assignRole('client-admin');
 

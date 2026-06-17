@@ -27,6 +27,7 @@
                             @if ($isSuperAdmin)
                                 <th class="px-5 py-3.5 text-right text-xs font-medium uppercase tracking-wide text-gray-400">{{ __('Tenant') }}</th>
                                 <th class="px-5 py-3.5 text-right text-xs font-medium uppercase tracking-wide text-gray-400">{{ __('Role') }}</th>
+                                <th class="px-5 py-3.5 text-right text-xs font-medium uppercase tracking-wide text-gray-400">{{ __('Registered by') }}</th>
                             @endif
                             <th class="px-5 py-3.5 text-right text-xs font-medium uppercase tracking-wide text-gray-400">{{ __('Quota') }}</th>
                             <th class="px-5 py-3.5 text-right text-xs font-medium uppercase tracking-wide text-gray-400">{{ __('Projects') }}</th>
@@ -59,6 +60,7 @@
                                             <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">{{ __('User') }}</span>
                                         @endif
                                     </td>
+                                    <td class="px-5 py-4 text-gray-600">{{ $user->creator?->name ?? '—' }}</td>
                                 @endif
                                 <td class="px-5 py-4"><x-quota-badge :user="$user" /></td>
                                 <td class="px-5 py-4 text-gray-600">{{ number_format($user->projects_count) }}</td>
