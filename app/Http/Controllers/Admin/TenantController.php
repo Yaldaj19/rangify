@@ -89,7 +89,10 @@ class TenantController extends Controller
 
     public function update(UpdateTenantRequest $request, Tenant $tenant): RedirectResponse
     {
-        $tenant->update($request->validated());
+        $data = $request->validated();
+        // چک‌باکس تیک‌نخورده اصلاً ارسال نمی‌شود؛ پس صریح از boolean() می‌خوانیم تا خاموش‌کردن هم کار کند.
+        $data['tool_access'] = $request->boolean('tool_access');
+        $tenant->update($data);
 
         return redirect()->route('admin.tenants.index')
             ->with('success', __('Tenant :name updated.', ['name' => $tenant->name]));

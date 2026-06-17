@@ -25,6 +25,16 @@
                 @error('status') <p class="{{ $err }}">{{ $message }}</p> @enderror
             </div>
 
+            <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                <label class="flex cursor-pointer select-none items-center gap-3">
+                    <input type="hidden" name="tool_access" value="0">
+                    <input type="checkbox" name="tool_access" value="1" @checked(old('tool_access', $tenant->tool_access))
+                           class="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500/30">
+                    <span class="text-sm font-medium text-ink-900">{{ __('Tool access (unlimited use of the editor)') }}</span>
+                </label>
+                <p class="mt-1.5 ps-7 text-xs text-gray-400">{{ __('When enabled, this organization can use the color editor without limits.') }}</p>
+            </div>
+
             @if ($tenant->owner)
                 <p class="text-xs text-gray-400">{{ __('Tenant admin: :name', ['name' => $tenant->owner->name]) }}</p>
             @endif

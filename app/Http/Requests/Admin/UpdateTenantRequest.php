@@ -19,6 +19,7 @@ class UpdateTenantRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'status' => ['required', Rule::in(['active', 'suspended'])],
+            'tool_access' => ['boolean'],
         ];
     }
 }

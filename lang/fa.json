@@ -143,5 +143,10 @@
     "Phone number": "شماره موبایل",
     "— or —": "— یا —",
     "Already registered?": "قبلاً ثبت‌نام کرده‌اید؟",
-    "Registered by": "ثبت‌شده توسط"
+    "Registered by": "ثبت‌شده توسط",
+    "Tool": "ابزار",
+    "Tool access (unlimited use of the editor)": "دسترسی به ابزار (استفاده‌ی نامحدود از ادیتور)",
+    "When enabled, this organization can use the color editor without limits.": "وقتی فعال باشد، این کارفرما می‌تواند بدون محدودیت از ادیتور رنگ‌آمیزی استفاده کند.",
+    "Enabled": "فعال",
+    "Disabled": "غیرفعال"
 }

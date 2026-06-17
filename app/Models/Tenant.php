@@ -18,7 +18,15 @@ class Tenant extends Model
         'slug',
         'owner_id',
         'status',
+        'tool_access',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'tool_access' => 'boolean',
+        ];
+    }
 
     public function owner(): BelongsTo
     {
