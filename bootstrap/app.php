@@ -23,6 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'quota' => \App\Http\Middleware\EnsureUserHasQuota::class,
         ]);
+
+        // endpointهای عمومی AI (ادیتور تست رایگان) از CSRF معاف‌اند تا با session منقضی 419 ندهند.
+        $middleware->validateCsrfTokens(except: [
+            'api/ai/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -459,6 +459,7 @@
                 isBrushing: false,
                 brushSubtract: false,
                 lastBrushPoint: null,
+                _renderQueued: false,
                 zoom: 1,
                 panX: 0,
                 panY: 0,
@@ -667,7 +668,10 @@
                         this.regionInfo = [];
                         this.hoverLabel = 0;
                         this.precomputeReady = false;
-                        this.precomputeRegions();
+                        // پیش‌محاسبه‌ی label-map (Felzenszwalb) کیفیت انتخابش از GrabCut پایین‌تر است،
+                        // پس غیرفعال شد تا کلیک‌های حالت هوشمند از GrabCut دقیقِ سمت سرور استفاده کنند.
+                        // (برای فعال‌سازی دوباره‌ی پیش‌نمایش فوری، این خط را برگردانید.)
+                        // this.precomputeRegions();
                     };
                     img.src = this.imageUrl;
                 },
@@ -852,7 +856,7 @@
                     } else {
                         this.paintBrushAt(x, y);
                     }
-                    this.renderCanvas(); // show the first dot immediately
+                    this.scheduleRender(); // show the first dot immediately
                     this.lastBrushPoint = { x, y };
                 },
 
@@ -868,7 +872,7 @@
                         const lbl = this.labelAtCanvas(x, y);
                         if (lbl !== this.hoverLabel) {
                             this.hoverLabel = lbl;
-                            this.renderCanvas();
+                            this.scheduleRender();
                         }
                         return;
                     }
@@ -895,7 +899,7 @@
                         paintFn(x, y);
                     }
                     this.lastBrushPoint = { x, y };
-                    this.renderCanvas();
+                    this.scheduleRender();
                 },
 
                 onMouseUp(e) {
@@ -1535,6 +1539,20 @@
                         }
                     }
                     ctx.putImageData(out, 0, 0);
+                },
+
+                /**
+                 * رندر را با فریم مرورگر هماهنگ می‌کند: چند mousemove پشت‌سرهم
+                 * فقط یک‌بار در هر فریم رندر می‌شوند تا UI حین کشیدنِ قلم هنگ نکند
+                 * و preview زنده دیده شود.
+                 */
+                scheduleRender() {
+                    if (this._renderQueued) return;
+                    this._renderQueued = true;
+                    requestAnimationFrame(() => {
+                        this._renderQueued = false;
+                        this.renderCanvas();
+                    });
                 },
 
                 switchMode(newMode) {
