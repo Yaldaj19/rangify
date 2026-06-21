@@ -96,6 +96,24 @@ class PrecomputeReq(BaseModel):
     merge_lab_threshold: float = 7.0
 
 
+class SemanticReq(BaseModel):
+    image: str
+    refine: bool = True       # edge-snap each mask to image edges
+
+
+class SemanticPointReq(BaseModel):
+    image: str
+    points: List[List[float]]
+    refine: bool = True
+
+
+class SamPointReq(BaseModel):
+    image: str
+    points: List[List[float]] = Field(..., min_length=1, max_length=16)
+    labels: Optional[List[int]] = None
+    refine: bool = True
+
+
 # ---------- helpers ----------
 DATA_URL_RE = re.compile(r"^data:image/\w+;base64,")
 
@@ -609,6 +627,114 @@ def precompute(req: PrecomputeReq):
         "scale_x": w / w0,
         "scale_y": h / h0,
         "method": "felzenszwalb+merge",
+        "elapsed_ms": int((time.time() - t0) * 1000),
+    }
+
+
+# --------------------------------------------------------------------------- #
+#  Deep-learning endpoints (Segformer + SAM, local CPU via onnxruntime)        #
+# --------------------------------------------------------------------------- #
+@app.post("/semantic")
+def semantic(req: SemanticReq):
+    """
+    Auto-detect every paintable surface (wall / ceiling / floor / window /
+    door / cabinet) in one shot using Segformer (ADE20K). Returns one region
+    per connected surface with its semantic label — no clicking required.
+    """
+    import vision_models as vm
+
+    t0 = time.time()
+    img = decode_image(req.image)
+    h, w = img.shape[:2]
+    regions_raw = vm.segment_surfaces(img)
+
+    regions = []
+    for r in regions_raw:
+        m = r["mask"]
+        if req.refine:
+            m = refine_mask_edges(m, img)
+        regions.append({
+            "surface": r["surface"],
+            "class_id": r["class_id"],
+            "mask": encode_mask_png(m),
+            "area": r["area"],
+            "centroid": r["centroid"],
+            "bbox": r["bbox"],
+        })
+
+    return {
+        "regions": regions,
+        "width": w,
+        "height": h,
+        "method": "segformer-b2-ade20k",
+        "elapsed_ms": int((time.time() - t0) * 1000),
+    }
+
+
+@app.post("/semantic-point")
+def semantic_point(req: SemanticPointReq):
+    """
+    Click a point -> return the semantic surface under it (whole wall/floor/...),
+    using Segformer. Best for 'paint this entire wall' with a single click.
+    """
+    import vision_models as vm
+
+    t0 = time.time()
+    img = decode_image(req.image)
+    h, w = img.shape[:2]
+    pts = to_pixel_points(req.points, w, h)
+    if not pts:
+        raise HTTPException(400, "at least one point required")
+
+    res = vm.surface_at_point(img, pts[0][0], pts[0][1])
+    if res is None:
+        raise HTTPException(422, "no recognised surface under the clicked point")
+
+    m = res["mask"]
+    if req.refine:
+        m = refine_mask_edges(m, img)
+
+    return {
+        "mask": encode_mask_png(m),
+        "surface": res["surface"],
+        "class_id": res["class_id"],
+        "width": w,
+        "height": h,
+        "method": "segformer-point",
+        "elapsed_ms": int((time.time() - t0) * 1000),
+    }
+
+
+@app.post("/sam-point")
+def sam_point(req: SamPointReq):
+    """
+    Promptable click-to-select via SlimSAM (SAM family). Precise object mask
+    for the clicked point — the strong replacement for /grabcut.
+    """
+    import vision_models as vm
+
+    t0 = time.time()
+    img = decode_image(req.image)
+    h, w = img.shape[:2]
+    pts = to_pixel_points(req.points, w, h)
+    if not pts:
+        raise HTTPException(400, "at least one point required")
+
+    try:
+        binary = vm._Sam.decode(img, pts[0][0], pts[0][1])
+    except Exception as e:
+        raise HTTPException(500, f"sam failed: {e}")
+
+    binary = cleanup_mask(binary)
+    binary = largest_connected(binary, pts[0])
+    if req.refine:
+        binary = refine_mask_edges(binary, img)
+
+    return {
+        "mask": encode_mask_png(binary),
+        "width": w,
+        "height": h,
+        "method": "slimsam-77",
         "elapsed_ms": int((time.time() - t0) * 1000),
     }
 

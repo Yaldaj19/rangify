@@ -20,5 +20,16 @@ if not exist ".venv\Scripts\python.exe" (
     )
 )
 
+REM === ensure the deep-learning ONNX weights exist (Segformer + SlimSAM, ~150MB) ===
+if not exist "models\segformer_b2.onnx" (
+    echo [setup] downloading vision models ^(~150MB, one-time^)...
+    .venv\Scripts\python.exe _download_models.py
+    if errorlevel 1 (
+        echo [error] model download failed. If HuggingFace is blocked, enable a VPN and re-run.
+        pause
+        exit /b 1
+    )
+)
+
 echo [run] starting on http://127.0.0.1:8001
 .venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8001 --reload

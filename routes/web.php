@@ -35,6 +35,8 @@ Route::middleware(['throttle:60,1'])->group(function () {
         ->name('ai.segment');
     Route::post('/api/ai/smart-point', [SmartSelectController::class, 'point'])
         ->name('ai.smart-point');
+    Route::post('/api/ai/segment-surfaces', [SmartSelectController::class, 'semantic'])
+        ->name('ai.segment-surfaces');
     Route::post('/api/ai/precompute', [SmartSelectController::class, 'precompute'])
         ->name('ai.precompute');
 });

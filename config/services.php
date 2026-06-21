@@ -44,8 +44,8 @@ return [
 
     'opencv' => [
         'url' => env('OPENCV_SERVICE_URL', 'http://127.0.0.1:8001'),
-        'timeout' => (int) env('OPENCV_TIMEOUT', 30),
-        'default_method' => env('OPENCV_DEFAULT_METHOD', 'grabcut'),
+        'timeout' => (int) env('OPENCV_TIMEOUT', 60),
+        'default_method' => env('OPENCV_DEFAULT_METHOD', 'semantic-point'),
     ],
 
     'replicate' => [

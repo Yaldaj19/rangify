@@ -78,7 +78,7 @@ class SmartSelectController extends Controller
             'points.*' => ['array', 'size:2'],
             'labels' => ['nullable', 'array'],
             'provider' => ['nullable', 'in:auto,opencv,replicate,huggingface'],
-            'method' => ['nullable', 'in:grabcut,watershed,flood-smart,slic-superpixels'],
+            'method' => ['nullable', 'in:semantic-point,sam-point,grabcut,watershed,flood-smart,slic-superpixels'],
         ]);
 
         $imageDataUrl = $this->normalizeImageDataUrl($validated['image']);
@@ -121,6 +121,46 @@ class SmartSelectController extends Controller
             'error' => 'همه provider ها fail شدن',
             'detail' => $errors,
         ], 502);
+    }
+
+    /**
+     * Auto-detect every paintable surface (wall/ceiling/floor/window/door/cabinet)
+     * in one shot using Segformer (ADE20K) on the local vision service.
+     * No clicking required — returns one labelled region per surface.
+     */
+    public function semantic(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'image' => ['required', 'string', 'max:20000000'],
+        ]);
+
+        if (empty(config('services.opencv.url')) || !$this->opencvAlive()) {
+            return response()->json([
+                'error' => 'سرویس تشخیص در دسترس نیست',
+                'detail' => 'برای تشخیص خودکار باید python-vision\\start.bat بالا باشه.',
+            ], 503);
+        }
+
+        $imageDataUrl = $this->normalizeImageDataUrl($validated['image']);
+        $base = rtrim((string) config('services.opencv.url'), '/');
+        $timeout = (int) (config('services.opencv.timeout') ?: 60);
+
+        try {
+            $resp = Http::timeout(max($timeout, 60))->connectTimeout(5)->acceptJson()
+                ->post("{$base}/semantic", ['image' => $imageDataUrl]);
+        } catch (Throwable $e) {
+            Log::warning('semantic call failed', ['msg' => $e->getMessage()]);
+            return response()->json(['error' => 'تماس با سرویس تشخیص ناموفق', 'detail' => $e->getMessage()], 502);
+        }
+
+        if (!$resp->successful()) {
+            return response()->json([
+                'error' => 'پاسخ نادرست از سرویس تشخیص',
+                'detail' => substr($resp->body(), 0, 300),
+            ], 502);
+        }
+
+        return response()->json($resp->json());
     }
 
     private function resolveProviderChain(string $requested): array
@@ -178,36 +218,55 @@ class SmartSelectController extends Controller
         $base = rtrim((string) config('services.opencv.url'), '/');
         $timeout = (int) (config('services.opencv.timeout') ?: 30);
 
-        $allowed = ['grabcut', 'watershed', 'flood-smart', 'slic-superpixels'];
+        $allowed = [
+            'semantic-point',   // Segformer: whole semantic surface (best for "paint this wall")
+            'sam-point',        // SlimSAM: precise object under the click
+            'grabcut', 'watershed', 'flood-smart', 'slic-superpixels',
+        ];
         if (!in_array($method, $allowed, true)) {
-            $method = 'grabcut';
+            $method = 'semantic-point';
         }
 
-        $http = Http::timeout($timeout)->connectTimeout(5)->acceptJson();
+        // Local fallback chain: if the deep-learning method can't help (e.g. the
+        // user clicked something that isn't a recognised surface), degrade
+        // gracefully to SAM, then to the classic GrabCut — all on the same
+        // local service, still free and offline.
+        $chain = match ($method) {
+            'semantic-point' => ['semantic-point', 'sam-point', 'grabcut'],
+            'sam-point' => ['sam-point', 'grabcut'],
+            default => [$method],
+        };
 
+        $http = Http::timeout($timeout)->connectTimeout(5)->acceptJson();
         $body = [
             'image' => $imageDataUrl,
             'points' => $points,
             'labels' => $labels,
         ];
 
-        $resp = $http->post("{$base}/{$method}", $body);
-
-        if (!$resp->successful()) {
-            throw new \RuntimeException('OpenCV HTTP ' . $resp->status() . ' — ' . substr($resp->body(), 0, 300));
+        $lastError = null;
+        foreach ($chain as $m) {
+            $resp = $http->post("{$base}/{$m}", $body);
+            if (!$resp->successful()) {
+                // 422 from /semantic-point = "no surface under point" → try next
+                $lastError = 'OpenCV ' . $m . ' HTTP ' . $resp->status() . ' — ' . substr($resp->body(), 0, 200);
+                continue;
+            }
+            $data = $resp->json();
+            if (empty($data['mask'])) {
+                $lastError = 'OpenCV ' . $m . ' returned no mask';
+                continue;
+            }
+            return [
+                'mask' => $data['mask'],
+                'width' => $data['width'] ?? null,
+                'height' => $data['height'] ?? null,
+                'method' => $data['method'] ?? $m,
+                'surface' => $data['surface'] ?? null,
+            ];
         }
 
-        $data = $resp->json();
-        if (empty($data['mask'])) {
-            throw new \RuntimeException('OpenCV returned no mask');
-        }
-
-        return [
-            'mask' => $data['mask'],
-            'width' => $data['width'] ?? null,
-            'height' => $data['height'] ?? null,
-            'method' => $data['method'] ?? $method,
-        ];
+        throw new \RuntimeException($lastError ?? 'OpenCV produced no mask');
     }
 
     /**

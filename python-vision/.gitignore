@@ -1,0 +1,12 @@
+# Python virtual env
+.venv/
+__pycache__/
+*.pyc
+
+# Downloaded ONNX model weights (~150 MB) — fetched by _download_models.py,
+# never committed. Run:  .venv\Scripts\python _download_models.py
+models/*.onnx
+
+# Local test artifacts
+test_out/
+_service.log

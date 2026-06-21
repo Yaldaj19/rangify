@@ -6,3 +6,6 @@ numpy>=2.0.0
 opencv-python>=4.10.0
 scikit-image>=0.24.0
 pydantic>=2.9.0
+# deep-learning segmentation (local CPU, no torch): Segformer + SlimSAM via ONNX
+onnxruntime>=1.20.0
+huggingface_hub>=0.25.0   # used by _download_models.py to fetch the .onnx weights

@@ -14,16 +14,40 @@ start.bat
 2. dependency ها رو نصب می‌کنه (~150 MB)
 3. سرویس رو روی `http://127.0.0.1:8001` بالا میاره
 
+## دانلود مدل‌های هوشمند (یک‌بار، الزامی)
+
+تشخیص قوی دیوار از دو مدل **deep-learning محلی** استفاده می‌کنه که با `onnxruntime`
+روی CPU اجرا می‌شن (بدون torch، بدون API ابری، کاملاً آفلاین و رایگان):
+
+- **Segformer-b2 (ADE20K)** — تشخیص معنایی: واقعاً می‌فهمه کجا `wall / ceiling / floor / window / door / cabinet` هست.
+- **SlimSAM-77 (خانواده SAM)** — انتخاب دقیق با کلیک (جایگزین GrabCut).
+
+وزن‌ها در گیت نیستن (~۱۵۰MB). یک‌بار دانلودشون کن:
+
+```cmd
+.venv\Scripts\python.exe _download_models.py
+```
+
+فایل‌ها در `models\` ذخیره می‌شن. دانلودر resume و retry داره (برای کانکشن‌های کند/قطع‌وصلی).
+اگه HuggingFace باز نشد، VPN لازمه.
+
 ## endpoint ها
 
-| route | کاربرد | میانگین زمان |
-|---|---|---|
-| `GET  /health` | چک سرویس | <10ms |
-| `POST /grabcut` | کلیک روی دیوار → mask دقیق | 300-800ms |
-| `POST /watershed` | چند نقطه FG + BG → جداسازی | 200-500ms |
-| `POST /flood-smart` | flood fill با احترام به لبه‌های Canny | 100-300ms |
-| `POST /slic-superpixels` | برای دیوار بافت‌دار / گرادیان | 500-1200ms |
-| `POST /segment-all` | کشف همه نواحی (auto mode) | 800-2000ms |
+| route | کاربرد | مدل | میانگین زمان (CPU) |
+|---|---|---|---|
+| `GET  /health` | چک سرویس | — | <10ms |
+| `POST /semantic` | **تشخیص خودکار همه سطوح** (بدون کلیک) | Segformer | 2-4s |
+| `POST /semantic-point` | **کلیک → کل دیوار/سقف/کف** (پیش‌فرض) | Segformer | 1.5-3s |
+| `POST /sam-point` | کلیک → انتخاب دقیق شیء | SlimSAM | 4-7s |
+| `POST /grabcut` | کلیک کلاسیک (fallback) | OpenCV | 300-800ms |
+| `POST /watershed` | چند نقطه FG + BG → جداسازی | OpenCV | 200-500ms |
+| `POST /flood-smart` | flood fill با احترام به لبه‌های Canny | OpenCV | 100-300ms |
+| `POST /slic-superpixels` | دیوار بافت‌دار / گرادیان | OpenCV | 500-1200ms |
+| `POST /segment-all` | کشف همه نواحی (رنگ‌محور) | scikit-image | 800-2000ms |
+
+> در لاراول، `smart-point` به‌صورت پیش‌فرض زنجیره‌ی `semantic-point → sam-point → grabcut`
+> رو امتحان می‌کنه؛ یعنی اگه کاربر روی چیزی کلیک کنه که سطح شناخته‌شده نیست،
+> خودکار به SAM و بعد GrabCut نزول می‌کنه.
 
 ## شکل ورودی/خروجی
 
