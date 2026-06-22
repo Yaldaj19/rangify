@@ -120,6 +120,28 @@ HUGGINGFACE_API_KEY=...
 chmod -R 775 storage bootstrap/cache
 ```
 
+### 9. storage:link روی هاست کار نمی‌کند (exec غیرفعال است)
+`php artisan storage:link` روی هاست خطای `Call to undefined function ...exec()` می‌دهد چون
+cPanel تابع `exec` را بسته است. به‌جایش symlink را دستی بساز (فقط یک‌بار در نصب اولیه لازم است):
+```bash
+cd ~/rangifyapp.yaldajahanshahi.ir/public
+ln -s ../storage/app/public storage
+```
+
+### 10. نصب کاملاً تازه روی هاست (از صفر)
+```bash
+cd ~/rangifyapp.yaldajahanshahi.ir
+git init && git remote add origin https://github.com/Yaldaj19/rangify.git
+git fetch origin && git checkout main
+php ~/composer.phar install --no-dev --optimize-autoloader
+cp .env.example .env
+php artisan key:generate
+# سپس DB و APP_ENV/APP_DEBUG/APP_URL را در .env تنظیم کن (به بخش‌های بالا نگاه کن)
+php artisan migrate:fresh --seed --force
+cd public && ln -s ../storage/app/public storage && cd ..
+# و document root ساب‌دامین را در cPanel روی پوشه‌ی public بگذار
+```
+
 ---
 
 ## 🆘 مشکل پیش آمد
