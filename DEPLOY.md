@@ -30,7 +30,8 @@
 
 ```powershell
 cd C:\xampp\htdocs\projects\rangify.site
-npm run build      # حتماً! هاست Node ندارد، public/build باید در گیت باشد
+# اگر بلِید/کلاس‌های Tailwind را تغییر دادی، CSS را دوباره بساز (هاست Node ندارد):
+./tools/tailwindcss.exe -i resources/css/app.css -o public/css/app.css --minify
 git add -A
 git commit -m "توضیح تغییر"
 ```
@@ -74,14 +75,18 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 ## 🩺 نکات مهم (یادداشت‌های لازم)
 
-### 1. Build روی هاست نیست
-هاست Node.js ندارد. هر تغییر در فایل‌های `resources/js/**` یا `resources/css/**` نیاز به
-`npm run build` **محلی** و commit شدن `public/build/*` دارد (این پوشه عمداً از `.gitignore` خارج شده).
+### 1. فرانت‌اند = Blade + Alpine (نه React/Inertia)
+صفحات واقعی Blade هستند و CSS را از `public/css/app.css` با `asset('css/app.css')` لود می‌کنند
+(نه `@vite`، نه `public/build`). پوشه‌ی `resources/js/**/*.tsx` و مسیر Vite/`npm run build` **مرده/بلااستفاده** است؛ سراغش نرو.
 
-### 2. Tailwind نسخه ۳ است
-پروژه روی **Tailwind v3** است (نه v4). در `resources/css/app.css` از `@tailwind base/components/utilities`
-استفاده کن، نه `@import "tailwindcss"`. رنگ‌های سفارشی (`brand`, `ink`) و فونت در `tailwind.config.js` تعریف شده‌اند.
-مسیر فونت‌ها مطلق است (`/fonts/...`) چون فونت‌ها در `public/fonts/` هستند.
+### 2. ساخت CSS (مهم) — با باینری standalone Tailwind v4
+هاست Node ندارد، پس CSS باید **محلی** ساخته و `public/css/app.css` در گیت commit شود:
+```powershell
+./tools/tailwindcss.exe -i resources/css/app.css -o public/css/app.css --minify
+```
+`resources/css/app.css` گرامر **Tailwind v4** دارد (`@import "tailwindcss"` + `@theme` + `@source "../views/**"`).
+دستش نزن که به v3 برگردد. فونت‌ها در `public/fonts/` و مسیرشان `url('../fonts/...')` (نسبت به `public/css/`) است.
+(`tools/*.exe` در `.gitignore` است و فقط محلی وجود دارد.)
 
 ### 3. دیتابیس MySQL/MariaDB هاست قدیمی است
 سقف طول کلید ۱۰۰۰ بایت است. به همین خاطر در `AppServiceProvider::boot()` مقدار
@@ -149,4 +154,4 @@ cd public && ln -s ../storage/app/public storage && cd ..
 1. `php artisan optimize:clear` و دوباره cache بساز.
 2. لاگ: `tail -50 storage/logs/laravel.log`
 3. صفحه‌ی سفید/خطای 500 → معمولاً `.env` ناقص است یا config کش‌شده قدیمی.
-4. استایل‌ها نمی‌آیند → `public/build` در گیت نیست یا `npm run build` نزده‌ای.
+4. استایل‌ها نمی‌آیند → `public/css/app.css` در گیت نیست یا با `tools/tailwindcss.exe` دوباره نساخته‌ای (به نکته ۲ نگاه کن).
