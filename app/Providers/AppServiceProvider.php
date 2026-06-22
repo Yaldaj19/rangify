@@ -21,9 +21,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Older MySQL/MariaDB caps index key length; limit default string length
-        // so utf8mb4 unique indexes (e.g. users.email) stay within the limit.
-        Schema::defaultStringLength(191);
+        // Older MySQL/MariaDB caps index key length (1000 bytes here). With utf8mb4
+        // (4 bytes/char) a two-column unique index (e.g. spatie permissions
+        // name+guard_name) needs <=125 per column, so cap default string length.
+        Schema::defaultStringLength(125);
 
         Vite::prefetch(concurrency: 3);
     }
