@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rangify — رنگ‌آمیزی مجازی دیوار</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/rangify-icon.png') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
 </head>
 <body class="bg-ink-50 text-ink-900 antialiased">
 
+    <div class="rg-topbar h-1.5 w-full"></div>
+
     <header class="border-b border-gray-200 bg-white">
         <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <span class="text-2xl font-bold text-brand-600">Rangify</span>
-                <span class="text-sm text-gray-500">رنگ‌آمیزی مجازی</span>
-            </div>
+            <a href="/" class="flex items-center gap-2">
+                <img src="{{ asset('images/rangify-logo.png') }}" alt="Rangify" width="120" height="36" class="h-9 w-auto">
+                <span class="text-sm text-gray-500 hidden sm:inline">رنگ‌آمیزی مجازی</span>
+            </a>
 
             @if (Route::has('login'))
                 <nav class="flex items-center gap-3">
@@ -42,7 +45,7 @@
     <main>
         <section class="max-w-6xl mx-auto px-6 py-20 text-center">
             <h1 class="text-5xl font-bold mb-6 text-ink-900">
-                دیوار خانه‌ات را <span class="text-brand-500">قبل از رنگ زدن</span> ببین
+                دیوار خانه‌ات را <span class="rg-gradient-text">قبل از رنگ زدن</span> ببین
             </h1>
 
             <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
@@ -52,7 +55,7 @@
 
             <div class="flex items-center justify-center gap-4 flex-wrap">
                 <a href="{{ route('trial') }}"
-                   class="rounded-lg bg-brand-500 px-8 py-3 text-base font-semibold text-white shadow-lg hover:bg-brand-600 hover:shadow-xl transition">
+                   class="rg-gradient rounded-lg px-8 py-3 text-base font-semibold text-white shadow-lg">
                     🎨 تست رایگان (بدون ثبت‌نام)
                 </a>
                 @if (Route::has('register'))
@@ -67,8 +70,8 @@
         <section id="features" class="max-w-6xl mx-auto px-6 py-16">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-                <div class="rounded-2xl bg-white p-6 shadow-sm border border-gray-100">
-                    <div class="w-12 h-12 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mb-4">
+                <div class="rounded-2xl bg-white p-6 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition">
+                    <div class="w-12 h-12 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center mb-4">
                         <span class="text-2xl">🎨</span>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">رنگ آزاد</h3>
@@ -77,8 +80,8 @@
                     </p>
                 </div>
 
-                <div class="rounded-2xl bg-white p-6 shadow-sm border border-gray-100">
-                    <div class="w-12 h-12 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mb-4">
+                <div class="rounded-2xl bg-white p-6 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition">
+                    <div class="w-12 h-12 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center mb-4">
                         <span class="text-2xl">🪄</span>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">جادوگری انتخاب</h3>
@@ -87,8 +90,8 @@
                     </p>
                 </div>
 
-                <div class="rounded-2xl bg-white p-6 shadow-sm border border-gray-100">
-                    <div class="w-12 h-12 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mb-4">
+                <div class="rounded-2xl bg-white p-6 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition">
+                    <div class="w-12 h-12 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center mb-4">
                         <span class="text-2xl">🌐</span>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">پیش‌نمایش سه‌بعدی</h3>
@@ -101,8 +104,12 @@
         </section>
     </main>
 
-    <footer class="border-t border-gray-200 mt-20 py-8 text-center text-sm text-gray-500">
-        © 2026 Rangify — ساخته‌شده با ❤️
+    <footer class="mt-20 border-t border-gray-200">
+        <div class="rg-topbar h-1 w-full"></div>
+        <div class="py-8 text-center text-sm text-gray-500">
+            <img src="{{ asset('images/rangify-logo.png') }}" alt="Rangify" width="110" height="32" class="mx-auto mb-3 h-8 w-auto opacity-90">
+            © 2026 Rangify — ساخته‌شده با ❤️
+        </div>
     </footer>
 
 </body>

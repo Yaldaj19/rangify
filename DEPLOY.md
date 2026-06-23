@@ -149,6 +149,14 @@ cd public && ln -s ../storage/app/public storage && cd ..
 
 ---
 
+### 11. نسخه‌ی PHP وب‌سرور (نه فقط ترمینال)
+هاست دو PHP دارد: یکی برای **SSH/CLI** و یکی برای **وب‌سرور**. ممکن است CLI روی 8.3 باشد ولی
+وب‌سرورِ ساب‌دامین پیش‌فرض روی 8.1 بماند → خطای 500 با پیام
+`Composer detected issues ... require ">= 8.2.0". You are running 8.1.x`.
+رفع: **cPanel → MultiPHP Manager** → ساب‌دامین `rangifyapp...` را تیک بزن → نسخه را روی **8.3** (مثل articlemaker) بگذار → **Apply**.
+
+---
+
 ## 🆘 مشکل پیش آمد
 
 1. `php artisan optimize:clear` و دوباره cache بساز.

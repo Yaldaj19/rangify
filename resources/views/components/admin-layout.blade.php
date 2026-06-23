@@ -100,6 +100,7 @@
 
     {{-- ===== Main ===== --}}
     <div class="{{ $rtl ? 'lg:mr-64' : 'lg:ml-64' }}">
+        <div class="rg-topbar h-1 w-full"></div>
         <header class="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-gray-100 bg-white/80 px-6 backdrop-blur-sm">
             <button @click="mobileOpen = true" class="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 lg:hidden" aria-label="{{ __('Menu') }}">
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
