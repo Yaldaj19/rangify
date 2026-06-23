@@ -45,18 +45,18 @@
     <main>
         <section class="max-w-6xl mx-auto px-6 pt-10 pb-8 text-center">
             <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-ink-900">
-                دیوار خانه‌ات را <span class="rg-gradient-text">قبل از رنگ زدن</span> ببین
+                دیوار خانه‌تان را <span class="rg-gradient-text">پیش از رنگ‌آمیزی</span> ببینید
             </h1>
 
             <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-6 leading-relaxed">
-                عکس از دیوار آپلود کن، رنگ‌های مختلف را امتحان کن، خروجی واقع‌گرایانه
-                با حفظ بافت و سایه. به‌علاوه پیش‌نمایش سه‌بعدی فضا.
+                کافی است عکس دیوار را بارگذاری کنید؛ رنگ‌های دلخواه را روی آن امتحان کنید و
+                نتیجه‌ای واقع‌گرایانه با حفظ بافت، سایه و نور را ببینید — همراه با پیش‌نمایش سه‌بعدی فضا.
             </p>
 
             <div class="flex items-center justify-center gap-4 flex-wrap">
                 <a href="{{ route('trial') }}"
                    class="rg-gradient rounded-lg px-8 py-3 text-base font-semibold text-white shadow-lg">
-                    🎨 تست رایگان (بدون ثبت‌نام)
+                    🎨 امتحان رایگان (بدون نیاز به ثبت‌نام)
                 </a>
                 @if (Route::has('register'))
                     <a href="{{ route('register') }}"
@@ -74,9 +74,9 @@
                     <div class="w-12 h-12 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center mb-4">
                         <span class="text-2xl">🎨</span>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">رنگ آزاد</h3>
+                    <h3 class="text-lg font-semibold mb-2">رنگ دلخواه</h3>
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        از پالت رنگ‌های آماده یا انتخاب آزاد. هر رنگی که می‌خواهی روی دیوار.
+                        از میان پالت رنگ‌های آماده انتخاب کنید یا هر رنگ دلخواهی را روی دیوار اعمال کنید.
                     </p>
                 </div>
 
@@ -84,9 +84,9 @@
                     <div class="w-12 h-12 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center mb-4">
                         <span class="text-2xl">🪄</span>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">جادوگری انتخاب</h3>
+                    <h3 class="text-lg font-semibold mb-2">انتخاب هوشمند دیوار</h3>
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        با Magic Wand فقط دیوار را انتخاب کن. مبل، تابلو، در و پنجره دست‌نخورده.
+                        تنها با چند کلیک فقط محدوده‌ی دیوار انتخاب می‌شود و مبلمان، تابلو، در و پنجره دست‌نخورده می‌مانند.
                     </p>
                 </div>
 
@@ -96,7 +96,7 @@
                     </div>
                     <h3 class="text-lg font-semibold mb-2">پیش‌نمایش سه‌بعدی</h3>
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        فضا را از زاویه‌های مختلف ببین. واقع‌گرایانه‌تر از یک عکس ثابت.
+                        فضا را از زاویه‌های گوناگون ببینید؛ تصویری واقع‌گرایانه‌تر از یک عکس ثابت.
                     </p>
                 </div>
 
