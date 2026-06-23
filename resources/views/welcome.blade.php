@@ -32,7 +32,7 @@
                         </a>
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}"
-                               class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 transition">
+                               class="rg-gradient rounded-lg px-4 py-2 text-sm font-medium text-white">
                                 ثبت‌نام
                             </a>
                         @endif
@@ -60,7 +60,7 @@
                 </a>
                 @if (Route::has('register'))
                     <a href="{{ route('register') }}"
-                       class="rounded-lg border border-brand-500 px-8 py-3 text-base font-semibold text-brand-600 hover:bg-brand-50 transition">
+                       class="rg-gradient rounded-lg px-8 py-3 text-base font-semibold text-white">
                         ثبت‌نام
                     </a>
                 @endif
