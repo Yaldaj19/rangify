@@ -43,12 +43,12 @@
     </header>
 
     <main>
-        <section class="max-w-6xl mx-auto px-6 py-20 text-center">
-            <h1 class="text-5xl font-bold mb-6 text-ink-900">
+        <section class="max-w-6xl mx-auto px-6 pt-10 pb-8 text-center">
+            <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-ink-900">
                 دیوار خانه‌ات را <span class="rg-gradient-text">قبل از رنگ زدن</span> ببین
             </h1>
 
-            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-6 leading-relaxed">
                 عکس از دیوار آپلود کن، رنگ‌های مختلف را امتحان کن، خروجی واقع‌گرایانه
                 با حفظ بافت و سایه. به‌علاوه پیش‌نمایش سه‌بعدی فضا.
             </p>
@@ -67,8 +67,8 @@
             </div>
         </section>
 
-        <section id="features" class="max-w-6xl mx-auto px-6 py-16">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <section id="features" class="max-w-6xl mx-auto px-6 pb-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <div class="rounded-2xl bg-white p-6 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition">
                     <div class="w-12 h-12 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center mb-4">
@@ -104,7 +104,7 @@
         </section>
     </main>
 
-    <footer class="mt-20 border-t border-gray-200">
+    <footer class="mt-12 border-t border-gray-200">
         <div class="rg-topbar h-1 w-full"></div>
         <div class="py-8 text-center text-sm text-gray-500">
             <img src="{{ asset('images/rangify-logo.png') }}" alt="Rangify" width="110" height="32" class="mx-auto mb-3 h-8 w-auto opacity-90">
