@@ -20,6 +20,8 @@
 </head>
 <body class="bg-ink-50 text-ink-900 antialiased h-screen flex flex-col overflow-hidden">
 
+    <div class="rg-topbar h-1 w-full flex-none"></div>
+
     <header class="border-b border-gray-200 bg-white flex-none">
         <div class="px-6 py-3 flex items-center justify-between">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2">

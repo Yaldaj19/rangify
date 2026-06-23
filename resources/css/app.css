@@ -3,16 +3,16 @@
 @theme {
     --font-sans: "Vazirmatn", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-    --color-brand-50: #fff7ed;
-    --color-brand-100: #ffedd5;
-    --color-brand-200: #fed7aa;
-    --color-brand-300: #fdba74;
-    --color-brand-400: #fb923c;
-    --color-brand-500: #f97316;
-    --color-brand-600: #ea580c;
-    --color-brand-700: #c2410c;
-    --color-brand-800: #9a3412;
-    --color-brand-900: #7c2d12;
+    --color-brand-50: #eef2ff;
+    --color-brand-100: #e0e7ff;
+    --color-brand-200: #c7d2fe;
+    --color-brand-300: #a5b4fc;
+    --color-brand-400: #818cf8;
+    --color-brand-500: #6366f1;
+    --color-brand-600: #4f46e5;
+    --color-brand-700: #4338ca;
+    --color-brand-800: #3730a3;
+    --color-brand-900: #312e81;
 
     --color-ink-50:  #f8fafc;
     --color-ink-900: #0f172a;
@@ -67,18 +67,18 @@
 /* ===== هویت رنگارنگ رنگی‌فای (Rangify spectrum) ===== */
 /* گرادینت امضای برند: نارنجی → صورتی → بنفش → فیروزه‌ای */
 .rg-gradient {
-    background-image: linear-gradient(135deg, #f97316 0%, #ec4899 38%, #8b5cf6 70%, #06b6d4 100%);
+    background-image: linear-gradient(135deg, #6366f1 0%, #ec4899 50%, #f97316 100%);
     color: #fff;
     transition: filter .15s ease, box-shadow .15s ease, transform .15s ease;
 }
 .rg-gradient:hover {
     filter: brightness(1.06) saturate(1.05);
-    box-shadow: 0 10px 24px -8px rgba(139, 92, 246, .45);
+    box-shadow: 0 10px 24px -8px rgba(99, 102, 241, .45);
 }
 
 /* متن گرادینتی (برای تیترها) — رنگ‌ها کمی تیره‌تر برای خوانایی */
 .rg-gradient-text {
-    background-image: linear-gradient(120deg, #ea580c 0%, #db2777 40%, #7c3aed 72%, #0891b2 100%);
+    background-image: linear-gradient(120deg, #4f46e5 0%, #db2777 52%, #ea580c 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -86,7 +86,7 @@
 
 /* نوار رنگین‌کمانی نازک بالای صفحات/هدرها */
 .rg-topbar {
-    background-image: linear-gradient(90deg, #f97316, #ec4899, #8b5cf6, #06b6d4, #22c55e, #f97316);
+    background-image: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899, #f97316, #14b8a6, #6366f1);
 }
 
 @media (prefers-reduced-motion: reduce) {
