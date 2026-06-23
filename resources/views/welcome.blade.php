@@ -104,11 +104,11 @@
         </section>
     </main>
 
-    <footer class="mt-12 border-t border-gray-200">
+    <footer class="mt-10 border-t border-gray-200">
         <div class="rg-topbar h-1 w-full"></div>
-        <div class="py-8 text-center text-sm text-gray-500">
-            <img src="{{ asset('images/rangify-logo.png') }}" alt="Rangify" width="110" height="32" class="mx-auto mb-3 h-8 w-auto opacity-90">
-            © 2026 Rangify — ساخته‌شده با ❤️
+        <div class="flex items-center justify-center gap-2 py-4 text-xs text-gray-500">
+            <img src="{{ asset('images/rangify-logo.png') }}" alt="Rangify" width="90" height="26" class="h-6 w-auto opacity-90">
+            <span>© 2026 Rangify — ساخته‌شده با ❤️</span>
         </div>
     </footer>
 
