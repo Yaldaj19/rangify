@@ -480,6 +480,7 @@
                 trialLimit: 2,
                 trialUses: 0,
                 showTrialLimit: false,
+                imageHash: null,        // هش پایدارِ تصویر اصلی (برای شمارش سمت سرور)
                 imageUrl: null,
                 originalImageData: null,
                 coloredImageData: null,
@@ -665,6 +666,29 @@
                     return Math.max(0, this.trialLimit - this.trialUses);
                 },
 
+                // هش پایدار از تصویر اصلیِ آپلودشده (مستقل از re-encode کانواس).
+                async computeImageHash(dataUrl) {
+                    try {
+                        const bytes = new TextEncoder().encode(dataUrl);
+                        const digest = await crypto.subtle.digest('SHA-256', bytes);
+                        this.imageHash = Array.from(new Uint8Array(digest))
+                            .map(b => b.toString(16).padStart(2, '0')).join('');
+                    } catch (_) {
+                        this.imageHash = null;
+                    }
+                },
+
+                // اگر سرور سقف تست رایگان را برگرداند، modal را نشان بده. خروجی true یعنی مدیریت شد.
+                handleTrialBlock(res, payload) {
+                    if (res && res.status === 403 && payload && payload.trial_limit_reached) {
+                        this.showTrialLimit = true;
+                        this.loading = false;
+                        this.loadingText = '';
+                        return true;
+                    }
+                    return false;
+                },
+
                 handleFile(file) {
                     if (!file || !file.type.startsWith('image/')) return;
                     if (file.size > 10 * 1024 * 1024) {
@@ -679,6 +703,8 @@
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         this.imageUrl = e.target.result;
+                        this.imageHash = null;
+                        this.computeImageHash(e.target.result);
                         if (!this.isAuthenticated) {
                             this.trialUses++;
                             try { localStorage.setItem('rangify_trial_uses', String(this.trialUses)); } catch (_) {}
@@ -755,7 +781,7 @@
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                                 'Accept': 'application/json',
                             },
-                            body: JSON.stringify({ image: imageDataUrl }),
+                            body: JSON.stringify({ image: imageDataUrl, image_hash: this.imageHash }),
                         });
                         if (!res.ok) {
                             // Service likely down — silently skip; smart mode falls back to per-click API
@@ -1203,6 +1229,7 @@
                             },
                             body: JSON.stringify({
                                 image: imageDataUrl,
+                                image_hash: this.imageHash,
                                 points: [[x / w, y / h]],
                                 labels: [1],
                             }),
@@ -1210,6 +1237,7 @@
 
                         const payload = await res.json().catch(() => null);
                         if (!res.ok || !payload || !payload.mask) {
+                            if (this.handleTrialBlock(res, payload)) return;
                             const msg = payload?.detail || payload?.error || ('HTTP ' + res.status);
                             const detail = typeof msg === 'string' ? msg : JSON.stringify(msg);
                             alert('انتخاب هوشمند ناموفق: ' + String(detail).substring(0, 300));
@@ -1499,11 +1527,12 @@
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                                 'Accept': 'application/json',
                             },
-                            body: JSON.stringify({ image: imageDataUrl }),
+                            body: JSON.stringify({ image: imageDataUrl, image_hash: this.imageHash }),
                         });
 
                         const payload = await res.json().catch(() => null);
                         if (!res.ok || !payload) {
+                            if (this.handleTrialBlock(res, payload)) return;
                             const msg = (payload && (payload.detail || payload.error)) || ('HTTP ' + res.status);
                             alert('خطا در تشخیص: ' + String(msg).substring(0, 250));
                             return;

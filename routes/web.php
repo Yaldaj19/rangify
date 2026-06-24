@@ -29,8 +29,8 @@ Route::get('/trial', function () {
 })->name('trial');
 
 // API هوش مصنوعی — عمومی (ادیتور تست رایگان ازش استفاده می‌کند).
-// throttle برای محافظت سبک در برابر سوءاستفاده/سوختن بودجه API (بدون لاگین، بر اساس IP).
-Route::middleware(['throttle:60,1'])->group(function () {
+// throttle: محافظت سبک در برابر spam. trial.guest: سقف تست رایگان روزانه‌ی مهمان (per-IP).
+Route::middleware(['throttle:60,1', 'trial.guest'])->group(function () {
     Route::post('/api/ai/segment', [AiVisionController::class, 'segment'])
         ->name('ai.segment');
     Route::post('/api/ai/smart-point', [SmartSelectController::class, 'point'])

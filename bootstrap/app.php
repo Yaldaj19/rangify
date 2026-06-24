@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'quota' => \App\Http\Middleware\EnsureUserHasQuota::class,
+            'trial.guest' => \App\Http\Middleware\LimitGuestTrial::class,
         ]);
 
         // endpointهای عمومی AI (ادیتور تست رایگان) از CSRF معاف‌اند تا با session منقضی 419 ندهند.
