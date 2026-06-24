@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rangify — رنگ‌آمیزی مجازی دیوار</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/rangify-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32.png') }}">
+    <link rel="icon" type="image/png" sizes="256x256" href="{{ asset('images/favicon-256.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon-180.png') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
 </head>
 <body class="bg-ink-50 text-ink-900 antialiased">
@@ -53,11 +55,14 @@
                 نتیجه‌ای واقع‌گرایانه با حفظ بافت، سایه و نور را ببینید — همراه با پیش‌نمایش سه‌بعدی فضا.
             </p>
 
-            <div class="flex items-center justify-center gap-4 flex-wrap">
-                <a href="{{ route('trial') }}"
-                   class="rg-gradient rounded-lg px-8 py-3 text-base font-semibold text-white shadow-lg">
-                    🎨 امتحان رایگان (بدون نیاز به ثبت‌نام)
-                </a>
+            <div class="flex items-start justify-center gap-4 flex-wrap">
+                <div class="flex flex-col items-center gap-1.5">
+                    <a href="{{ route('trial') }}"
+                       class="rg-gradient rounded-lg px-8 py-3 text-base font-semibold text-white shadow-lg">
+                        🎨 امتحان رایگان (بدون نیاز به ثبت‌نام)
+                    </a>
+                    <span class="text-xs text-gray-500">۲ بار استفاده رایگان، بدون نیاز به حساب کاربری</span>
+                </div>
                 @if (Route::has('register'))
                     <a href="{{ route('register') }}"
                        class="rg-gradient rounded-lg px-8 py-3 text-base font-semibold text-white">
@@ -108,7 +113,10 @@
         <div class="rg-topbar h-1 w-full"></div>
         <div class="flex items-center justify-center gap-2 py-4 text-xs text-gray-500">
             <img src="{{ asset('images/rangify-logo.png') }}" alt="Rangify" width="90" height="26" class="h-6 w-auto opacity-90">
-            <span>© 2026 Rangify — ساخته‌شده با ❤️</span>
+            <span>© 2026 Rangify — توسعه‌یافته با
+                <a href="https://yaldajahanshahi.ir/" target="_blank" rel="noopener"
+                   class="font-semibold text-brand-600 hover:text-brand-700 transition">YJ19</a>
+            </span>
         </div>
     </footer>
 

@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" type="image/png" href="{{ asset('images/rangify-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32.png') }}">
+    <link rel="icon" type="image/png" sizes="256x256" href="{{ asset('images/favicon-256.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon-180.png') }}">
     <title>ادیتور رنگ — Rangify</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
     <script defer src="{{ asset('js/alpine.min.js') }}"></script>
@@ -16,6 +18,7 @@
             96%           { transform: scale(0.96); box-shadow: 0 0 0 14px rgba(59, 130, 246, 0); }
         }
         .shortcuts-pulse { animation: shortcuts-pulse 7s ease-in-out infinite; }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-ink-50 text-ink-900 antialiased h-screen flex flex-col overflow-hidden">
@@ -38,7 +41,7 @@
         </div>
     </header>
 
-    <main class="flex-1 flex flex-col md:flex-row-reverse overflow-hidden relative" x-data="editor()"
+    <main class="flex-1 flex flex-col md:flex-row-reverse overflow-hidden relative" x-data="editor(@js(auth()->check()))"
           x-on:keydown.window="onKeyDown($event)"
           x-on:keyup.window="onKeyUp($event)">
 
@@ -58,6 +61,10 @@
                     <p class="text-lg font-semibold text-gray-700 mb-2">عکس اتاقت رو اینجا بکش</p>
                     <p class="text-sm text-gray-500 mb-4">یا کلیک کن تا انتخاب کنی</p>
                     <p class="text-xs text-gray-400">JPG / PNG / WebP — حداکثر 10MB</p>
+                    <template x-if="!isAuthenticated">
+                        <p class="mt-4 text-sm font-medium" :class="trialRemaining > 0 ? 'text-amber-600' : 'text-red-500'"
+                           x-text="trialRemaining > 0 ? trialRemaining.toLocaleString('fa-IR') + ' بار تست رایگان باقی مانده است' : 'سقف تست رایگان به پایان رسید — برای ادامه ثبت‌نام کنید'"></p>
+                    </template>
                     <input type="file" accept="image/jpeg,image/png,image/webp" class="hidden"
                            x-on:change="handleFile($event.target.files[0])">
                 </label>
@@ -440,11 +447,39 @@
 
             </div>
         </aside>
+
+        {{-- هشدار پایان سقف تست رایگان (فقط مهمان) --}}
+        <div x-show="showTrialLimit" x-cloak x-transition.opacity
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+             x-on:click.self="showTrialLimit = false">
+            <div class="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
+                <div class="mb-3 text-4xl">🎨</div>
+                <h3 class="mb-2 text-lg font-bold text-ink-900">سقف تست رایگان تمام شد</h3>
+                <p class="mb-5 text-sm leading-relaxed text-gray-600">
+                    شما ۲ بار از نسخه‌ی آزمایشی رایگان استفاده کرده‌اید. برای ادامه و دسترسی به امکانات بیشتر، رایگان ثبت‌نام کنید.
+                </p>
+                <div class="flex gap-3">
+                    <a href="{{ route('register') }}"
+                       class="flex-1 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-600">
+                        ثبت‌نام رایگان
+                    </a>
+                    <button type="button" x-on:click="showTrialLimit = false"
+                            class="rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-600 transition hover:bg-gray-50">
+                        بستن
+                    </button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
-        function editor() {
+        function editor(isAuthenticated = false) {
             return {
+                // ---- trial usage limit (guest only) ----
+                isAuthenticated: isAuthenticated,
+                trialLimit: 2,
+                trialUses: 0,
+                showTrialLimit: false,
                 imageUrl: null,
                 originalImageData: null,
                 coloredImageData: null,
@@ -617,15 +652,37 @@
                     }
                 },
 
+                init() {
+                    if (!this.isAuthenticated) {
+                        try {
+                            const stored = parseInt(localStorage.getItem('rangify_trial_uses') || '0', 10);
+                            this.trialUses = isNaN(stored) ? 0 : stored;
+                        } catch (_) { this.trialUses = 0; }
+                    }
+                },
+
+                get trialRemaining() {
+                    return Math.max(0, this.trialLimit - this.trialUses);
+                },
+
                 handleFile(file) {
                     if (!file || !file.type.startsWith('image/')) return;
                     if (file.size > 10 * 1024 * 1024) {
                         alert('حجم فایل نباید بیشتر از 10MB باشد.');
                         return;
                     }
+                    // سقف تست رایگان فقط برای کاربران واردنشده اعمال می‌شود
+                    if (!this.isAuthenticated && this.trialUses >= this.trialLimit) {
+                        this.showTrialLimit = true;
+                        return;
+                    }
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         this.imageUrl = e.target.result;
+                        if (!this.isAuthenticated) {
+                            this.trialUses++;
+                            try { localStorage.setItem('rangify_trial_uses', String(this.trialUses)); } catch (_) {}
+                        }
                         this.$nextTick(() => this.loadToCanvas());
                     };
                     reader.readAsDataURL(file);
